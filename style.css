@@ -266,6 +266,78 @@ body {
   border-radius: 50%;
 }
 
+/* Month Selector */
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.month-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.month-btn:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.month-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Header buttons group */
+.header-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-main);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-secondary svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
 /* ===== MAIN CONTENT ===== */
 .main-content {
   flex: 1;
@@ -1074,4 +1146,114 @@ body {
 
 .row-income {
   background: linear-gradient(90deg, var(--green-bg) 0%, var(--bg-card) 50%);
+}
+
+/* Editable rows */
+.row-editable {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.row-editable:hover {
+  background: var(--blue-bg) !important;
+}
+
+.row-editable:hover td:first-child::before {
+  content: '✎';
+  margin-right: 8px;
+  color: var(--primary);
+  font-size: 0.8rem;
+}
+
+/* PDF Upload area */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: var(--primary);
+  background: var(--blue-bg);
+}
+
+.upload-zone svg {
+  width: 48px;
+  height: 48px;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  fill: none;
+  margin-bottom: 12px;
+}
+
+.upload-zone p {
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.upload-zone span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Processing indicator */
+.processing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--blue-bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Month tabs */
+.month-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.month-tab {
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.month-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.month-tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
 }

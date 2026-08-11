@@ -1,48 +1,71 @@
-// Dashboard Financeiro — Admin Panel
-// Sistema completo com sidebar e múltiplas páginas
+// Dashboard Financeiro — Admin Panel v2
+// Com edição, seletor de mês e upload de PDF
 
-const KEY = 'dashfin_bruno_v10';
-const TODAY = new Date().getDate();
-const CURMES = 'ago/26';
+const KEY = 'dashfin_bruno_v11';
 
-// ===== DADOS PADRÃO =====
-const DEFAULT_EXP = [
-  {p:'Bruno',n:'Bradesco ELO',t:'Cartão',v:2066.24,d:'10/08'},
-  {p:'Bruno',n:'Inter',t:'Cartão',v:463.87,d:'15/08'},
-  {p:'Bruno',n:'PAN Mastercard 3018',t:'Cartão',v:98.04,d:'12/08'},
-  {p:'Bruno',n:'Neon',t:'Cartão',v:351.10,d:'11/08'},
-  {p:'Bruno',n:'Santander VISA 4079',t:'Cartão',v:1821.81,d:'15/08'},
-  {p:'Bruno',n:'Dívida Pix — Wesley',t:'Pix',v:1989.24,d:'—'},
-  {p:'Rose',n:'Santander SX VISA 3668',t:'Cartão',v:1187.18,d:'12/08'},
-  {p:'Isabel',n:'Nubank',t:'Cartão',v:2177.65,d:'10/08'},
-  {p:'Isabelle',n:'Santander Free 8550',t:'Cartão',v:1609.61,d:'10/08'},
-  {p:'Isabelle',n:'Nubank',t:'Cartão',v:2875.12,d:'11/08'},
-  {p:'Isabelle',n:'Itaú 1736',t:'Cartão',v:388.65,d:'10/08'},
-  {p:'Isabelle',n:'Itaú 4141',t:'Cartão',v:247.60,d:'10/08'},
-  {p:'Isabelle',n:'Carrefour Gold',t:'Cartão',v:541.78,d:'11/08'},
-  {p:'Isabelle',n:'Renner',t:'Cartão',v:285.33,d:'08/08'},
-  {p:'Isabelle',n:'Vivo celular',t:'Conta',v:107.29,d:'10/08'},
-  {p:'Casa',n:'Luz',t:'Conta',v:255.41,d:'—'},
-  {p:'Casa',n:'Água / Esgoto',t:'Conta',v:217.15,d:'18/08'},
-  {p:'Casa',n:'Internet fixa',t:'Conta',v:111.00,d:'—'},
-  {p:'Isabel',n:'Vivo celular',t:'Conta',v:54.90,d:'—'},
-  {p:'Rose',n:'Tim celular',t:'Conta',v:82.00,d:'—'},
-  {p:'Rose',n:'Luz',t:'Conta',v:100.00,d:'—'},
-  {p:'Bruno',n:'Festa sobrinhos — Mateus (7x)',t:'Outro',v:304.25,d:'—'},
-  {p:'Bruno',n:'Festa sobrinhos — Tiago (8x)',t:'Outro',v:304.25,d:'—'},
+// ===== MESES DISPONÍVEIS =====
+const MESES = [
+  {id: 'ago/26', label: 'Agosto 2026', num: '08/26'},
+  {id: 'set/26', label: 'Setembro 2026', num: '09/26'},
+  {id: 'out/26', label: 'Outubro 2026', num: '10/26'},
+  {id: 'nov/26', label: 'Novembro 2026', num: '11/26'},
+  {id: 'dez/26', label: 'Dezembro 2026', num: '12/26'},
 ];
 
-const DEFAULT_INC = [
-  {p:'Rose',n:'Salário',v:2246.00,d:'07/08'},
-  {p:'Rose',n:'Vale Refeição',v:565.00,d:'07/08'},
-  {p:'Rose',n:'Extra mensal',v:300.00,d:'15/08'},
-  {p:'Rose',n:'PLR (só este mês)',v:178.20,d:'07/08'},
-  {p:'Isabelle',n:'Salário',v:4513.52,d:'07/08'},
-  {p:'Isabelle',n:'Vale Refeição',v:200.00,d:'07/08',vr:true},
-  {p:'Isabel',n:'Aposentadoria',v:5049.79,d:'07/08'},
-  {p:'Isabel',n:'Pensão do marido',v:1420.74,d:'07/08'},
-  {p:'Bruno',n:'Salário',v:3455.20,d:'—'},
-];
+let mesAtual = 0; // índice do mês atual
+
+// ===== DADOS PADRÃO POR MÊS =====
+const DEFAULT_DATA = {
+  'ago/26': {
+    exp: [
+      {p:'Bruno',n:'Bradesco ELO',t:'Cartão',v:2066.24,d:'10'},
+      {p:'Bruno',n:'Inter',t:'Cartão',v:463.87,d:'15'},
+      {p:'Bruno',n:'PAN Mastercard 3018',t:'Cartão',v:98.04,d:'12'},
+      {p:'Bruno',n:'Neon',t:'Cartão',v:351.10,d:'11'},
+      {p:'Bruno',n:'Santander VISA 4079',t:'Cartão',v:1821.81,d:'15'},
+      {p:'Bruno',n:'Dívida Pix — Wesley',t:'Pix',v:1989.24,d:''},
+      {p:'Rose',n:'Santander SX VISA 3668',t:'Cartão',v:1187.18,d:'12'},
+      {p:'Isabel',n:'Nubank',t:'Cartão',v:2177.65,d:'10'},
+      {p:'Isabelle',n:'Santander Free 8550',t:'Cartão',v:1609.61,d:'10'},
+      {p:'Isabelle',n:'Nubank',t:'Cartão',v:2875.12,d:'11'},
+      {p:'Isabelle',n:'Itaú 1736',t:'Cartão',v:388.65,d:'10'},
+      {p:'Isabelle',n:'Itaú 4141',t:'Cartão',v:247.60,d:'10'},
+      {p:'Isabelle',n:'Carrefour Gold',t:'Cartão',v:541.78,d:'11'},
+      {p:'Isabelle',n:'Renner',t:'Cartão',v:285.33,d:'08'},
+      {p:'Isabelle',n:'Vivo celular',t:'Conta',v:107.29,d:'10'},
+      {p:'Casa',n:'Luz',t:'Conta',v:255.41,d:''},
+      {p:'Casa',n:'Água / Esgoto',t:'Conta',v:217.15,d:'18'},
+      {p:'Casa',n:'Internet fixa',t:'Conta',v:111.00,d:''},
+      {p:'Isabel',n:'Vivo celular',t:'Conta',v:54.90,d:''},
+      {p:'Rose',n:'Tim celular',t:'Conta',v:82.00,d:''},
+      {p:'Rose',n:'Luz',t:'Conta',v:100.00,d:''},
+      {p:'Bruno',n:'Festa sobrinhos — Mateus (7x)',t:'Outro',v:304.25,d:''},
+      {p:'Bruno',n:'Festa sobrinhos — Tiago (8x)',t:'Outro',v:304.25,d:''},
+    ],
+    inc: [
+      {p:'Rose',n:'Salário',v:2246.00,d:'07'},
+      {p:'Rose',n:'Vale Refeição',v:565.00,d:'07'},
+      {p:'Rose',n:'Extra mensal',v:300.00,d:'15'},
+      {p:'Rose',n:'PLR (só este mês)',v:178.20,d:'07'},
+      {p:'Isabelle',n:'Salário',v:4513.52,d:'07'},
+      {p:'Isabelle',n:'Vale Refeição',v:200.00,d:'07',vr:true},
+      {p:'Isabel',n:'Aposentadoria',v:5049.79,d:'07'},
+      {p:'Isabel',n:'Pensão do marido',v:1420.74,d:'07'},
+      {p:'Bruno',n:'Salário',v:3455.20,d:''},
+    ]
+  },
+  'set/26': {
+    exp: [],
+    inc: [
+      {p:'Rose',n:'Salário',v:2246.00,d:'07'},
+      {p:'Rose',n:'Vale Refeição',v:565.00,d:'07'},
+      {p:'Isabelle',n:'Salário',v:4513.52,d:'07'},
+      {p:'Isabelle',n:'Vale Refeição',v:200.00,d:'07',vr:true},
+      {p:'Isabel',n:'Aposentadoria',v:5049.79,d:'07'},
+      {p:'Isabel',n:'Pensão do marido',v:1420.74,d:'07'},
+    ]
+  }
+};
 
 const OBRA_DEFAULT = {
   pagos: [
@@ -50,8 +73,7 @@ const OBRA_DEFAULT = {
     {m:'mar/26',v:604.00},{m:'abr/26',v:782.37},{m:'mai/26',v:796.85},
     {m:'jun/26',v:788.39},{m:'jul/26',v:830.01},{m:'ago/26',v:919.98},
     {m:'set/26',v:975.04}
-  ],
-  _v: 2
+  ]
 };
 
 const INV_DEFAULT = {cdi: 14, itens: [{n:'Isabelle',v:12000},{n:'Isabel',v:28000},{n:'Bruno',v:6000}]};
@@ -66,18 +88,27 @@ const FESTA_NEXT = 608.50;
 const CATEG = [['Alimentação',1041.92],['Lazer',493.48],['Compras',381.78],['Veicular',252.76],['Farmácia',199.30],['Outros',181.45],['Transporte',155.42],['Água',128.01],['Assinaturas',41.00]];
 const CATCOLORS = ['#ef4444','#8b5cf6','#3b82f6','#10b981','#f59e0b','#6b7280','#14b8a6','#0ea5e9','#ec4899'];
 const COLORS = {Bruno:'#3b82f6',Rose:'#f59e0b',Isabel:'#8b5cf6',Isabelle:'#ec4899',Casa:'#6b7280'};
-const MES = {'01':'jan','02':'fev','03':'mar','04':'abr','05':'mai','06':'jun','07':'jul','08':'ago','09':'set','10':'out','11':'nov','12':'dez'};
+const MES_NOMES = {'01':'jan','02':'fev','03':'mar','04':'abr','05':'mai','06':'jun','07':'jul','08':'ago','09':'set','10':'out','11':'nov','12':'dez'};
 
 // ===== UTILIDADES =====
 const clone = x => JSON.parse(JSON.stringify(x));
 const brl = x => 'R$ ' + (x || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dayNum = d => (d && d.includes('/')) ? (parseInt(d.split('/')[0]) || 99) : 99;
+const dayNum = d => parseInt(d) || 99;
+
 function parseValor(str) {
   if (!str) return 0;
   str = String(str).replace(/[R$\s]/g, '');
   if (str.includes(',') && str.includes('.')) str = str.replace(/\./g, '').replace(',', '.');
   else if (str.includes(',')) str = str.replace(',', '.');
   return parseFloat(str) || 0;
+}
+
+function getMesAtual() {
+  return MESES[mesAtual];
+}
+
+function getMesId() {
+  return getMesAtual().id;
 }
 
 // ===== ESTADO =====
@@ -87,28 +118,46 @@ let chartPessoa, chartCategoria;
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.exp && s.inc) return s;
+    if (s && s.meses) return s;
   } catch (e) {}
-  return {exp: clone(DEFAULT_EXP), inc: clone(DEFAULT_INC), obra: clone(OBRA_DEFAULT), inv: clone(INV_DEFAULT)};
+  return {
+    meses: clone(DEFAULT_DATA),
+    obra: clone(OBRA_DEFAULT),
+    inv: clone(INV_DEFAULT)
+  };
 }
-function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
 
-if (!state.obra || state.obra._v !== 2) state.obra = clone(OBRA_DEFAULT);
-if (!state.inv || !Array.isArray(state.inv.itens)) state.inv = clone(INV_DEFAULT);
-state.exp = state.exp.filter(e => !/apartamento/i.test(e.n));
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+
+// Garantir estrutura
+MESES.forEach(m => {
+  if (!state.meses[m.id]) {
+    state.meses[m.id] = {exp: [], inc: []};
+  }
+});
+if (!state.obra) state.obra = clone(OBRA_DEFAULT);
+if (!state.inv) state.inv = clone(INV_DEFAULT);
 save();
+
+// Dados do mês atual
+function getExp() { return state.meses[getMesId()]?.exp || []; }
+function getInc() { return state.meses[getMesId()]?.inc || []; }
+function setExp(arr) { state.meses[getMesId()].exp = arr; save(); }
+function setInc(arr) { state.meses[getMesId()].inc = arr; save(); }
 
 // ===== CÁLCULOS =====
 const nextCardSum = () => NEXTCARD.reduce((a, x) => a + x.v, 0);
 const wesleyNext = () => WESLEY.filter(w => w[1] < w[2]).reduce((a, w) => a + w[0], 0);
 const obraPago = m => (state.obra.pagos || []).filter(p => !m || p.m === m).reduce((s, p) => s + (p.v || 0), 0);
 const obraTotal = () => obraPago();
-const aptNext = () => obraPago('set/26') || obraPago(CURMES);
+const aptNext = () => obraPago('set/26') || obraPago(getMesId());
 
 function allOut() {
-  const a = state.exp.slice();
-  const apt = obraPago(CURMES);
-  if (apt > 0) a.push({p:'Casa',n:'Apartamento '+CURMES,t:'Moradia',v:apt,d:'04/08',virtual:true});
+  const a = getExp().slice();
+  const apt = obraPago(getMesId());
+  if (apt > 0) a.push({p:'Casa',n:'Apartamento '+getMesId(),t:'Moradia',v:apt,d:'04',virtual:true});
   return a;
 }
 
@@ -142,6 +191,7 @@ const sidebarClose = document.getElementById('sidebarClose');
 const navLinks = document.querySelectorAll('.nav-link');
 const pages = document.querySelectorAll('.page');
 const pageTitle = document.getElementById('pageTitle');
+const currentMonthEl = document.getElementById('currentMonth');
 
 const pageTitles = {
   dashboard: 'Dashboard',
@@ -153,12 +203,25 @@ const pageTitles = {
   obra: 'Apartamento'
 };
 
+let currentPage = 'dashboard';
+
 function goToPage(pageName) {
+  currentPage = pageName;
   navLinks.forEach(l => l.classList.toggle('active', l.dataset.page === pageName));
   pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + pageName));
   pageTitle.textContent = pageTitles[pageName] || pageName;
   sidebar.classList.remove('open');
   renderPage(pageName);
+}
+
+function updateMonthDisplay() {
+  currentMonthEl.textContent = getMesAtual().label;
+}
+
+function changeMonth(delta) {
+  mesAtual = Math.max(0, Math.min(MESES.length - 1, mesAtual + delta));
+  updateMonthDisplay();
+  renderPage(currentPage);
 }
 
 navLinks.forEach(link => {
@@ -177,6 +240,8 @@ document.querySelectorAll('[data-goto]').forEach(el => {
 
 menuToggle.addEventListener('click', () => sidebar.classList.add('open'));
 sidebarClose.addEventListener('click', () => sidebar.classList.remove('open'));
+document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
 
 // ===== MODAL =====
 const modalOverlay = document.getElementById('modalOverlay');
@@ -219,22 +284,24 @@ function renderPage(page) {
 }
 
 function renderDashboard() {
+  const exp = getExp();
+  const inc = getInc();
   const sai = allOut().reduce((a, e) => a + (e.v || 0), 0);
-  const entra = state.inc.reduce((a, e) => a + (e.v || 0), 0);
-  const vr = state.inc.filter(e => e.vr).reduce((a, e) => a + (e.v || 0), 0);
+  const entra = inc.reduce((a, e) => a + (e.v || 0), 0);
+  const vr = inc.filter(e => e.vr).reduce((a, e) => a + (e.v || 0), 0);
   const sobra = entra - vr - sai;
 
   document.getElementById('kpiEntradas').textContent = brl(entra);
-  document.getElementById('kpiEntradasHint').textContent = state.inc.length + ' itens';
+  document.getElementById('kpiEntradasHint').textContent = inc.length + ' itens';
   document.getElementById('kpiSaidas').textContent = brl(sai);
-  document.getElementById('kpiSaidasHint').textContent = state.exp.length + ' contas';
+  document.getElementById('kpiSaidasHint').textContent = exp.length + ' contas';
   document.getElementById('kpiSaldo').textContent = brl(sobra);
   document.getElementById('kpiSaldo').className = 'kpi-value ' + (sobra >= 0 ? '' : 'red');
   document.getElementById('kpiProximo').textContent = brl(aptNext() + wesleyNext() + FESTA_NEXT + nextCardSum());
 
   // Alerta
   const ab = document.getElementById('alertBox');
-  const bruno = state.inc.filter(e => e.p === 'Bruno').reduce((a, e) => a + (e.v || 0), 0);
+  const bruno = inc.filter(e => e.p === 'Bruno').reduce((a, e) => a + (e.v || 0), 0);
   if (bruno === 0) {
     ab.className = 'alert-box warn';
     ab.innerHTML = '<strong>Atenção:</strong> Falta adicionar o salário do Bruno nas Entradas.';
@@ -276,13 +343,12 @@ function renderDashboard() {
   }
 
   // Próximos vencimentos
-  const rows = allOut().filter(e => e.d && e.d.includes('/')).sort((a, b) => dayNum(a.d) - dayNum(b.d)).slice(0, 5);
+  const rows = allOut().filter(e => e.d).sort((a, b) => dayNum(a.d) - dayNum(b.d)).slice(0, 5);
   document.getElementById('tblProximos').innerHTML = rows.map(e => {
-    const dd = e.d.split('/');
-    const warn = parseInt(dd[0]) <= TODAY ? ' warn' : '';
+    const warn = parseInt(e.d) <= new Date().getDate() ? ' warn' : '';
     const tagClass = e.t === 'Pix' ? 'pix' : (e.t === 'Cartão' ? 'cartao' : 'conta');
     return `<tr>
-      <td><div class="day-cell"><div class="day-num${warn}"><span class="month">${MES[dd[1]]||''}</span>${dd[0]}</div></div></td>
+      <td><div class="day-cell"><div class="day-num${warn}">${e.d || '—'}</div></div></td>
       <td class="font-medium">${e.n}</td>
       <td>${e.p}</td>
       <td><span class="tag ${tagClass}">${e.t}</span></td>
@@ -292,80 +358,78 @@ function renderDashboard() {
 }
 
 function renderCalendario() {
+  const exp = getExp();
+  const inc = getInc();
   const rows = [];
-  allOut().forEach((e, i) => rows.push({k:'out', e, i: e.virtual ? -1 : i}));
-  state.inc.forEach((e, i) => { if ((e.v||0)>0 && e.d && e.d.includes('/')) rows.push({k:'in', e, i}); });
+  exp.forEach((e, i) => rows.push({k:'out', e, i: e.virtual ? -1 : i}));
+  inc.forEach((e, i) => { if ((e.v||0)>0) rows.push({k:'in', e, i}); });
   rows.sort((a,b) => dayNum(a.e.d) - dayNum(b.e.d));
 
   document.getElementById('tblCalendario').innerHTML = rows.map(r => {
     const e = r.e;
     if (r.k === 'in') {
-      const dd = e.d.split('/');
-      return `<tr class="row-income">
-        <td><div class="day-cell"><div class="day-num income"><span class="month">${MES[dd[1]]||''}</span>${dd[0]}</div></div></td>
+      return `<tr class="row-income row-editable" onclick="editEntrada(${r.i})">
+        <td><div class="day-cell"><div class="day-num income">${e.d || '—'}</div></div></td>
         <td class="font-medium">${e.n}</td>
         <td>${e.p}</td>
         <td><span class="tag entrada">Entrada</span></td>
         <td class="text-right text-green">+${brl(e.v)}</td>
-        <td></td>
+        <td><button class="btn-delete" onclick="event.stopPropagation();deleteInc(${r.i})">×</button></td>
       </tr>`;
     } else {
-      let dayHtml = '<div class="day-num"><span>—</span></div>';
-      if (e.d && e.d.includes('/')) {
-        const dd = e.d.split('/');
-        const warn = parseInt(dd[0]) <= TODAY ? ' warn' : '';
-        dayHtml = `<div class="day-num${warn}"><span class="month">${MES[dd[1]]||''}</span>${dd[0]}</div>`;
-      }
+      const warn = e.d && parseInt(e.d) <= new Date().getDate() ? ' warn' : '';
       const tagClass = e.t === 'Pix' ? 'pix' : (e.t === 'Cartão' ? 'cartao' : (e.t === 'Moradia' ? 'moradia' : (e.t === 'Outro' ? 'outro' : 'conta')));
-      return `<tr>
-        <td><div class="day-cell">${dayHtml}</div></td>
+      return `<tr class="row-editable" onclick="editConta(${r.i})">
+        <td><div class="day-cell"><div class="day-num${warn}">${e.d || '—'}</div></div></td>
         <td class="font-medium">${e.n}</td>
         <td>${e.p}</td>
         <td><span class="tag ${tagClass}">${e.t}</span></td>
         <td class="text-right text-red">${brl(e.v)}</td>
-        <td>${r.i >= 0 ? `<button class="btn-delete" onclick="deleteExp(${r.i})">×</button>` : ''}</td>
+        <td>${r.i >= 0 ? `<button class="btn-delete" onclick="event.stopPropagation();deleteExp(${r.i})">×</button>` : ''}</td>
       </tr>`;
     }
   }).join('');
 }
 
 function renderEntradas() {
-  document.getElementById('tblEntradas').innerHTML = state.inc.map((e, i) => {
+  const inc = getInc();
+  document.getElementById('tblEntradas').innerHTML = inc.map((e, i) => {
     const tag = e.vr ? '<span class="tag vr">VR</span>' : '';
-    return `<tr>
+    return `<tr class="row-editable" onclick="editEntrada(${i})">
       <td class="font-medium">${e.p}</td>
       <td>${e.n} ${tag}</td>
       <td>${e.d || '—'}</td>
       <td class="text-right text-green">${brl(e.v)}</td>
-      <td><button class="btn-delete" onclick="deleteInc(${i})">×</button></td>
+      <td><button class="btn-delete" onclick="event.stopPropagation();deleteInc(${i})">×</button></td>
     </tr>`;
   }).join('');
 
   // Resumo por pessoa
   const byP = {};
-  state.inc.forEach(e => byP[e.p] = (byP[e.p] || 0) + e.v);
+  inc.forEach(e => byP[e.p] = (byP[e.p] || 0) + e.v);
   document.getElementById('resumoEntradas').innerHTML = Object.entries(byP).map(([p, v]) =>
     `<div class="summary-item"><span class="label">${p}</span><span class="value">${brl(v)}</span></div>`
   ).join('');
 }
 
 function renderContas() {
-  document.getElementById('tblContas').innerHTML = state.exp.map((e, i) => {
+  const exp = getExp();
+  document.getElementById('tblContas').innerHTML = exp.map((e, i) => {
     const tagClass = e.t === 'Pix' ? 'pix' : (e.t === 'Cartão' ? 'cartao' : (e.t === 'Moradia' ? 'moradia' : (e.t === 'Outro' ? 'outro' : 'conta')));
-    return `<tr>
+    return `<tr class="row-editable" onclick="editConta(${i})">
       <td class="font-medium">${e.n}</td>
       <td>${e.p}</td>
       <td><span class="tag ${tagClass}">${e.t}</span></td>
       <td>${e.d || '—'}</td>
       <td class="text-right text-red">${brl(e.v)}</td>
-      <td><button class="btn-delete" onclick="deleteExp(${i})">×</button></td>
+      <td><button class="btn-delete" onclick="event.stopPropagation();deleteExp(${i})">×</button></td>
     </tr>`;
   }).join('');
 
   // Stats
-  const total = state.exp.reduce((a, e) => a + e.v, 0);
+  const total = exp.reduce((a, e) => a + e.v, 0);
   const byTipo = {};
-  state.exp.forEach(e => byTipo[e.t] = (byTipo[e.t] || 0) + 1);
+  exp.forEach(e => byTipo[e.t] = (byTipo[e.t] || 0) + 1);
   document.getElementById('statsContas').innerHTML = `
     <div class="stat-item"><span class="stat-label">Total</span><span class="stat-value">${brl(total)}</span></div>
     <div class="stat-item"><span class="stat-label">Cartões</span><span class="stat-value">${byTipo['Cartão'] || 0}</span></div>
@@ -423,11 +487,11 @@ function renderInvestimentos() {
   if (document.activeElement !== inp) inp.value = state.inv.cdi || '';
 
   document.getElementById('tblInvest').innerHTML = state.inv.itens.map((it, i) => `
-    <tr>
+    <tr class="row-editable" onclick="editInvest(${i})">
       <td class="font-medium">${it.n}</td>
       <td class="text-right">${brl(it.v)}</td>
       <td class="text-right text-green">${brl(it.v * (Math.pow(1 + cdi, 1/12) - 1))}</td>
-      <td><button class="btn-delete" onclick="deleteInv(${i})">×</button></td>
+      <td><button class="btn-delete" onclick="event.stopPropagation();deleteInv(${i})">×</button></td>
     </tr>
   `).join('');
 }
@@ -438,7 +502,6 @@ function renderObra() {
   document.getElementById('obraTotal').textContent = brl(total);
   document.getElementById('obraHint').textContent = d.length + ' pagamentos registrados';
 
-  // Chart
   const max = Math.max(...d.map(p => p.v), 1);
   document.getElementById('obraChart').innerHTML = d.map(p => `
     <div class="progress-row">
@@ -448,24 +511,143 @@ function renderObra() {
     </div>
   `).join('');
 
-  // Tabela
   document.getElementById('tblObra').innerHTML = d.map((p, i) => `
-    <tr>
+    <tr class="row-editable" onclick="editObra(${i})">
       <td class="font-medium">${p.m}</td>
       <td>Dia 04</td>
       <td class="text-right">${brl(p.v)}</td>
-      <td><button class="btn-delete" onclick="deleteObra(${i})">×</button></td>
+      <td><button class="btn-delete" onclick="event.stopPropagation();deleteObra(${i})">×</button></td>
     </tr>
   `).join('');
 }
 
-// ===== AÇÕES =====
-window.deleteExp = i => { if (confirm('Remover esta conta?')) { state.exp.splice(i, 1); save(); renderPage('calendario'); renderPage('contas'); showToast('Conta removida'); }};
-window.deleteInc = i => { if (confirm('Remover esta entrada?')) { state.inc.splice(i, 1); save(); renderPage('entradas'); showToast('Entrada removida'); }};
+// ===== AÇÕES DE DELETAR =====
+window.deleteExp = i => { if (confirm('Remover esta conta?')) { const exp = getExp(); exp.splice(i, 1); setExp(exp); renderPage(currentPage); showToast('Conta removida'); }};
+window.deleteInc = i => { if (confirm('Remover esta entrada?')) { const inc = getInc(); inc.splice(i, 1); setInc(inc); renderPage(currentPage); showToast('Entrada removida'); }};
 window.deleteInv = i => { if (confirm('Remover este investimento?')) { state.inv.itens.splice(i, 1); save(); renderPage('investimentos'); showToast('Investimento removido'); }};
 window.deleteObra = i => { if (confirm('Remover este pagamento?')) { state.obra.pagos.splice(i, 1); save(); renderPage('obra'); showToast('Pagamento removido'); }};
 
-// ===== MODAIS =====
+// ===== MODAIS DE EDIÇÃO =====
+window.editConta = (i) => {
+  const exp = getExp();
+  const e = exp[i];
+  if (!e) return;
+
+  openModal('Editar Conta', `
+    <div class="form-group"><label class="form-label">Valor</label><input type="text" class="form-input large" id="fValor" inputmode="decimal" value="${e.v}"></div>
+    <div class="form-group"><label class="form-label">Descrição</label><input type="text" class="form-input" id="fNome" value="${e.n}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Pessoa</label><select class="form-select" id="fPessoa">
+        ${['Bruno','Rose','Isabel','Isabelle','Casa'].map(p => `<option ${p===e.p?'selected':''}>${p}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="fTipo">
+        ${['Cartão','Pix','Conta','Moradia','Outro'].map(t => `<option ${t===e.t?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Dia do vencimento</label><input type="text" class="form-input" id="fVenc" value="${e.d||''}" inputmode="numeric"></div>
+    <button class="btn-submit" onclick="saveConta(${i})">Salvar Alterações</button>
+  `);
+};
+
+window.saveConta = (i) => {
+  const exp = getExp();
+  exp[i] = {
+    p: document.getElementById('fPessoa').value,
+    n: document.getElementById('fNome').value.trim(),
+    t: document.getElementById('fTipo').value,
+    v: parseValor(document.getElementById('fValor').value),
+    d: document.getElementById('fVenc').value.trim()
+  };
+  setExp(exp);
+  closeModal();
+  renderPage(currentPage);
+  showToast('Conta atualizada');
+};
+
+window.editEntrada = (i) => {
+  const inc = getInc();
+  const e = inc[i];
+  if (!e) return;
+
+  openModal('Editar Entrada', `
+    <div class="form-group"><label class="form-label">Valor</label><input type="text" class="form-input large" id="fValor" inputmode="decimal" value="${e.v}"></div>
+    <div class="form-group"><label class="form-label">Descrição</label><input type="text" class="form-input" id="fNome" value="${e.n}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Pessoa</label><select class="form-select" id="fPessoa">
+        ${['Bruno','Rose','Isabel','Isabelle'].map(p => `<option ${p===e.p?'selected':''}>${p}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label class="form-label">Dia</label><input type="text" class="form-input" id="fDia" value="${e.d||''}" inputmode="numeric"></div>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="fVR" ${e.vr?'checked':''}>
+        <span>É Vale Refeição (não conta como renda)</span>
+      </label>
+    </div>
+    <button class="btn-submit" onclick="saveEntrada(${i})">Salvar Alterações</button>
+  `);
+};
+
+window.saveEntrada = (i) => {
+  const inc = getInc();
+  inc[i] = {
+    p: document.getElementById('fPessoa').value,
+    n: document.getElementById('fNome').value.trim(),
+    v: parseValor(document.getElementById('fValor').value),
+    d: document.getElementById('fDia').value.trim(),
+    vr: document.getElementById('fVR').checked
+  };
+  setInc(inc);
+  closeModal();
+  renderPage(currentPage);
+  showToast('Entrada atualizada');
+};
+
+window.editInvest = (i) => {
+  const it = state.inv.itens[i];
+  if (!it) return;
+
+  openModal('Editar Investimento', `
+    <div class="form-group"><label class="form-label">Valor</label><input type="text" class="form-input large" id="fValor" inputmode="decimal" value="${it.v}"></div>
+    <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="fNome" value="${it.n}"></div>
+    <button class="btn-submit" onclick="saveInvest(${i})">Salvar Alterações</button>
+  `);
+};
+
+window.saveInvest = (i) => {
+  state.inv.itens[i] = {
+    n: document.getElementById('fNome').value.trim(),
+    v: parseValor(document.getElementById('fValor').value)
+  };
+  save();
+  closeModal();
+  renderPage('investimentos');
+  showToast('Investimento atualizado');
+};
+
+window.editObra = (i) => {
+  const p = state.obra.pagos[i];
+  if (!p) return;
+
+  openModal('Editar Pagamento', `
+    <div class="form-group"><label class="form-label">Valor</label><input type="text" class="form-input large" id="fValor" inputmode="decimal" value="${p.v}"></div>
+    <div class="form-group"><label class="form-label">Mês</label><input type="text" class="form-input" id="fMes" value="${p.m}"></div>
+    <button class="btn-submit" onclick="saveObra(${i})">Salvar Alterações</button>
+  `);
+};
+
+window.saveObra = (i) => {
+  state.obra.pagos[i] = {
+    m: document.getElementById('fMes').value.trim(),
+    v: parseValor(document.getElementById('fValor').value)
+  };
+  save();
+  closeModal();
+  renderPage('obra');
+  showToast('Pagamento atualizado');
+};
+
+// ===== MODAIS DE ADICIONAR =====
 function modalConta() {
   openModal('Nova Conta', `
     <div class="form-group"><label class="form-label">Valor</label><input type="text" class="form-input large" id="fValor" inputmode="decimal" placeholder="0,00"></div>
@@ -474,16 +656,21 @@ function modalConta() {
       <div class="form-group"><label class="form-label">Pessoa</label><select class="form-select" id="fPessoa"><option>Bruno</option><option>Rose</option><option>Isabel</option><option>Isabelle</option><option>Casa</option></select></div>
       <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="fTipo"><option>Cartão</option><option>Pix</option><option>Conta</option><option>Moradia</option><option>Outro</option></select></div>
     </div>
-    <div class="form-group"><label class="form-label">Vencimento</label><input type="text" class="form-input" id="fVenc" placeholder="dd/mm" inputmode="numeric"></div>
+    <div class="form-group"><label class="form-label">Dia do vencimento</label><input type="text" class="form-input" id="fVenc" placeholder="10" inputmode="numeric"></div>
     <button class="btn-submit" onclick="submitConta()">Adicionar Conta</button>
   `);
 }
+
 window.submitConta = () => {
   const v = parseValor(document.getElementById('fValor').value);
   const n = document.getElementById('fNome').value.trim();
   if (!n || !(v > 0)) return showToast('Preencha valor e descrição');
-  state.exp.push({p: document.getElementById('fPessoa').value, n, t: document.getElementById('fTipo').value, v, d: document.getElementById('fVenc').value || '—'});
-  save(); closeModal(); renderPage('calendario'); renderPage('contas'); showToast('Conta adicionada');
+  const exp = getExp();
+  exp.push({p: document.getElementById('fPessoa').value, n, t: document.getElementById('fTipo').value, v, d: document.getElementById('fVenc').value.trim()});
+  setExp(exp);
+  closeModal();
+  renderPage(currentPage);
+  showToast('Conta adicionada');
 };
 
 function modalEntrada() {
@@ -497,14 +684,17 @@ function modalEntrada() {
     <button class="btn-submit" onclick="submitEntrada()">Adicionar Entrada</button>
   `);
 }
+
 window.submitEntrada = () => {
   const v = parseValor(document.getElementById('fValor').value);
   const n = document.getElementById('fNome').value.trim();
   if (!n || !(v > 0)) return showToast('Preencha valor e descrição');
-  let d = document.getElementById('fDia').value.trim();
-  if (d && !d.includes('/')) d = d.padStart(2, '0') + '/08';
-  state.inc.push({p: document.getElementById('fPessoa').value, n, v, d: d || '—'});
-  save(); closeModal(); renderPage('entradas'); showToast('Entrada adicionada');
+  const inc = getInc();
+  inc.push({p: document.getElementById('fPessoa').value, n, v, d: document.getElementById('fDia').value.trim()});
+  setInc(inc);
+  closeModal();
+  renderPage(currentPage);
+  showToast('Entrada adicionada');
 };
 
 function modalInvest() {
@@ -514,12 +704,16 @@ function modalInvest() {
     <button class="btn-submit" onclick="submitInvest()">Adicionar</button>
   `);
 }
+
 window.submitInvest = () => {
   const v = parseValor(document.getElementById('fValor').value);
   const n = document.getElementById('fNome').value.trim();
   if (!n || !(v > 0)) return showToast('Preencha nome e valor');
   state.inv.itens.push({n, v});
-  save(); closeModal(); renderPage('investimentos'); showToast('Investimento adicionado');
+  save();
+  closeModal();
+  renderPage('investimentos');
+  showToast('Investimento adicionado');
 };
 
 function modalObra() {
@@ -529,13 +723,28 @@ function modalObra() {
     <button class="btn-submit" onclick="submitObra()">Registrar</button>
   `);
 }
+
 window.submitObra = () => {
   const v = parseValor(document.getElementById('fValor').value);
   const m = document.getElementById('fMes').value.trim();
   if (!m || !(v > 0)) return showToast('Preencha mês e valor');
   state.obra.pagos.push({m, v});
-  save(); closeModal(); renderPage('obra'); showToast('Pagamento registrado');
+  save();
+  closeModal();
+  renderPage('obra');
+  showToast('Pagamento registrado');
 };
+
+// ===== UPLOAD DE PDF =====
+document.getElementById('inputPDF').addEventListener('change', async (e) => {
+  const files = e.target.files;
+  if (!files.length) return;
+
+  showToast(`${files.length} PDF(s) selecionado(s) - Envie para mim no chat que eu processo!`);
+
+  // Limpa o input para permitir selecionar o mesmo arquivo novamente
+  e.target.value = '';
+});
 
 // Event listeners para botões
 document.getElementById('btnAddConta').addEventListener('click', modalConta);
@@ -552,7 +761,7 @@ document.getElementById('inputCDI').addEventListener('input', e => {
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (confirm('Restaurar todos os dados originais? Isso apaga suas alterações.')) {
-    state = {exp: clone(DEFAULT_EXP), inc: clone(DEFAULT_INC), obra: clone(OBRA_DEFAULT), inv: clone(INV_DEFAULT)};
+    state = {meses: clone(DEFAULT_DATA), obra: clone(OBRA_DEFAULT), inv: clone(INV_DEFAULT)};
     save();
     goToPage('dashboard');
     showToast('Dados restaurados');
@@ -560,4 +769,5 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 // ===== INICIALIZAÇÃO =====
+updateMonthDisplay();
 goToPage('dashboard');
