@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Gerar Ícones do App</title>
+  <style>
+    body { font-family: system-ui; padding: 40px; text-align: center; }
+    canvas { border: 1px solid #ccc; margin: 20px; }
+    a { display: inline-block; margin: 10px; padding: 12px 24px; background: #1e3a5f; color: white; text-decoration: none; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Gerar Ícones do PWA</h1>
+  <p>Clique nos links abaixo para baixar os ícones:</p>
+
+  <canvas id="c192" width="192" height="192"></canvas>
+  <canvas id="c512" width="512" height="512"></canvas>
+
+  <br>
+  <a id="d192" download="icon-192.png">Baixar icon-192.png</a>
+  <a id="d512" download="icon-512.png">Baixar icon-512.png</a>
+
+  <p style="margin-top:40px;color:#666">Salve os dois arquivos na mesma pasta do index.html</p>
+
+  <script>
+    function desenhar(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      const r = size * 0.2; // border radius
+
+      // Fundo azul escuro arredondado
+      ctx.fillStyle = '#1e3a5f';
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(size - r, 0);
+      ctx.quadraticCurveTo(size, 0, size, r);
+      ctx.lineTo(size, size - r);
+      ctx.quadraticCurveTo(size, size, size - r, size);
+      ctx.lineTo(r, size);
+      ctx.quadraticCurveTo(0, size, 0, size - r);
+      ctx.lineTo(0, r);
+      ctx.quadraticCurveTo(0, 0, r, 0);
+      ctx.fill();
+
+      // Símbolo $
+      ctx.fillStyle = '#10b981';
+      ctx.font = `bold ${size * 0.5}px system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('$', size / 2, size / 2 + size * 0.03);
+    }
+
+    desenhar(document.getElementById('c192'), 192);
+    desenhar(document.getElementById('c512'), 512);
+
+    document.getElementById('d192').href = document.getElementById('c192').toDataURL('image/png');
+    document.getElementById('d512').href = document.getElementById('c512').toDataURL('image/png');
+  </script>
+</body>
+</html>

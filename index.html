@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Dashboard Financeiro</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">₿</span>
+      <span class="logo-text">Finanças</span>
+    </div>
+    <button class="sidebar-close" id="sidebarClose">×</button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <span class="nav-section-title">Principal</span>
+      <a href="#" class="nav-link active" data-page="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-link" data-page="calendario">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Calendário
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <span class="nav-section-title">Financeiro</span>
+      <a href="#" class="nav-link" data-page="entradas">
+        <svg viewBox="0 0 24 24"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+        Entradas
+      </a>
+      <a href="#" class="nav-link" data-page="contas">
+        <svg viewBox="0 0 24 24"><polyline points="23,18 13.5,8.5 8.5,13.5 1,6"/><polyline points="17,18 23,18 23,12"/></svg>
+        Contas a Pagar
+      </a>
+      <a href="#" class="nav-link" data-page="parcelas">
+        <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Parcelas
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <span class="nav-section-title">Patrimônio</span>
+      <a href="#" class="nav-link" data-page="investimentos">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 6v2m0 8v2"/></svg>
+        Investimentos
+      </a>
+      <a href="#" class="nav-link" data-page="obra">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+        Apartamento
+      </a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-reset" id="resetBtn">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      Resetar dados
+    </button>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main-wrapper">
+
+  <!-- Header -->
+  <header class="header">
+    <button class="menu-toggle" id="menuToggle">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <div class="header-title">
+      <h1 id="pageTitle">Dashboard</h1>
+      <span class="header-subtitle">Agosto 2026</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="header-status" id="headerStatus">
+        <span class="status-dot"></span>
+        <span class="status-text">Atualizado</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="main-content">
+
+    <!-- PAGE: Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon green">
+            <svg viewBox="0 0 24 24"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/></svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total de Entradas</span>
+            <span class="kpi-value" id="kpiEntradas">R$ 0</span>
+            <span class="kpi-hint" id="kpiEntradasHint">4 pessoas</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon red">
+            <svg viewBox="0 0 24 24"><polyline points="23,18 13.5,8.5 8.5,13.5 1,6"/></svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total de Saídas</span>
+            <span class="kpi-value" id="kpiSaidas">R$ 0</span>
+            <span class="kpi-hint" id="kpiSaidasHint">0 contas</span>
+          </div>
+        </div>
+
+        <div class="kpi-card highlight" id="kpiSaldoCard">
+          <div class="kpi-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Saldo do Mês</span>
+            <span class="kpi-value" id="kpiSaldo">R$ 0</span>
+            <span class="kpi-hint">Entradas - Saídas</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon amber">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Próximo Mês</span>
+            <span class="kpi-value" id="kpiProximo">R$ 0</span>
+            <span class="kpi-hint">Previsão set/26</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert-box" id="alertBox"></div>
+
+      <!-- Charts Row -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3>Gastos por Pessoa</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrapper">
+              <canvas id="chartPessoa"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Gastos por Categoria</h3>
+            <span class="card-badge">Nubank jul/26</span>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrapper">
+              <canvas id="chartCategoria"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Próximos Vencimentos</h3>
+          <a href="#" class="card-link" data-goto="calendario">Ver todos</a>
+        </div>
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dia</th>
+                  <th>Descrição</th>
+                  <th>Pessoa</th>
+                  <th>Tipo</th>
+                  <th class="text-right">Valor</th>
+                </tr>
+              </thead>
+              <tbody id="tblProximos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Calendário -->
+    <div class="page" id="page-calendario">
+      <div class="page-header">
+        <div>
+          <h2>Calendário de Vencimentos</h2>
+          <p>Todas as contas e entradas do mês de agosto</p>
+        </div>
+        <button class="btn-primary" id="btnAddConta">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nova Conta
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th width="80">Dia</th>
+                  <th>Descrição</th>
+                  <th width="100">Pessoa</th>
+                  <th width="100">Tipo</th>
+                  <th width="120" class="text-right">Valor</th>
+                  <th width="60"></th>
+                </tr>
+              </thead>
+              <tbody id="tblCalendario"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Entradas -->
+    <div class="page" id="page-entradas">
+      <div class="page-header">
+        <div>
+          <h2>Entradas</h2>
+          <p>Salários, VR e extras de cada pessoa</p>
+        </div>
+        <button class="btn-primary" id="btnAddEntrada">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nova Entrada
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Pessoa</th>
+                  <th>Descrição</th>
+                  <th width="100">Dia</th>
+                  <th width="150" class="text-right">Valor</th>
+                  <th width="60"></th>
+                </tr>
+              </thead>
+              <tbody id="tblEntradas"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:24px">
+        <div class="card">
+          <div class="card-header">
+            <h3>Resumo por Pessoa</h3>
+          </div>
+          <div class="card-body" id="resumoEntradas"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Observações</h3>
+          </div>
+          <div class="card-body">
+            <p class="text-muted">VR (Vale Refeição) só pode ser usado para alimentação, não conta como renda líquida para pagar contas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Contas -->
+    <div class="page" id="page-contas">
+      <div class="page-header">
+        <div>
+          <h2>Contas a Pagar</h2>
+          <p>Todas as despesas do mês</p>
+        </div>
+        <button class="btn-primary" id="btnAddConta2">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nova Conta
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th width="100">Pessoa</th>
+                  <th width="100">Tipo</th>
+                  <th width="100">Vencimento</th>
+                  <th width="150" class="text-right">Valor</th>
+                  <th width="60"></th>
+                </tr>
+              </thead>
+              <tbody id="tblContas"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row" id="statsContas"></div>
+    </div>
+
+    <!-- PAGE: Parcelas -->
+    <div class="page" id="page-parcelas">
+      <div class="page-header">
+        <div>
+          <h2>Parcelas e Dívidas</h2>
+          <p>Acompanhamento de parcelas dos cartões e dívida do Wesley</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3>Dívida Wesley</h3>
+            <span class="card-badge green">Zera fev/27</span>
+          </div>
+          <div class="card-body">
+            <div id="tlWesley"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Parcelas dos Cartões</h3>
+            <span class="card-badge">Todos os cartões</span>
+          </div>
+          <div class="card-body">
+            <div id="tlCartoes"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card-header">
+          <h3>Previsão Próximo Mês (Setembro)</h3>
+        </div>
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <tbody id="tblPrevisao"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: Investimentos -->
+    <div class="page" id="page-investimentos">
+      <div class="page-header">
+        <div>
+          <h2>Investimentos</h2>
+          <p>Caixinhas e aplicações com rendimento CDI</p>
+        </div>
+        <button class="btn-primary" id="btnAddInvest">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo Investimento
+        </button>
+      </div>
+
+      <div class="kpi-grid small">
+        <div class="kpi-card">
+          <div class="kpi-content">
+            <span class="kpi-label">Total Investido</span>
+            <span class="kpi-value blue" id="invTotal">R$ 0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-content">
+            <span class="kpi-label">Rendimento/Mês</span>
+            <span class="kpi-value green" id="invMes">R$ 0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-content">
+            <span class="kpi-label">Rendimento/Ano</span>
+            <span class="kpi-value green" id="invAno">R$ 0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-content">
+            <span class="kpi-label">CDI ao Ano</span>
+            <div class="cdi-input-inline">
+              <input type="text" id="inputCDI" value="14" inputmode="decimal">
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th class="text-right">Valor Aplicado</th>
+                  <th class="text-right">Rende/Mês</th>
+                  <th width="60"></th>
+                </tr>
+              </thead>
+              <tbody id="tblInvest"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:16px">
+        <strong>Nota:</strong> Valores brutos, antes do IR (15% a 22,5%). LCI/LCA são isentas. Dívida de cartão no rotativo custa mais que o CDI — quite antes de investir.
+      </div>
+    </div>
+
+    <!-- PAGE: Obra -->
+    <div class="page" id="page-obra">
+      <div class="page-header">
+        <div>
+          <h2>Apartamento — Obra</h2>
+          <p>Acompanhamento dos pagamentos mensais</p>
+        </div>
+        <button class="btn-primary" id="btnAddObra">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Registrar Pagamento
+        </button>
+      </div>
+
+      <div class="kpi-grid small">
+        <div class="kpi-card big">
+          <div class="kpi-content center">
+            <span class="kpi-label">Total Investido na Obra</span>
+            <span class="kpi-value big green" id="obraTotal">R$ 0</span>
+            <span class="kpi-hint" id="obraHint">0 pagamentos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Evolução dos Pagamentos</h3>
+        </div>
+        <div class="card-body">
+          <div id="obraChart"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card-header">
+          <h3>Histórico</h3>
+        </div>
+        <div class="card-body no-padding">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mês</th>
+                  <th>Data</th>
+                  <th class="text-right">Valor Pago</th>
+                  <th width="60"></th>
+                </tr>
+              </thead>
+              <tbody id="tblObra"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Adicionar</h3>
+      <button class="modal-close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
